@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCSMP // Terminal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root {
+    --bg: #0a0e12;
+    --panel: #0f151a;
+    --line: rgba(94, 234, 212, 0.16);
+    --cyan: #5eead4;
+    --cyan-dim: #3a8f83;
+    --amber: #ff9d4d;
+    --text: #cdd8da;
+    --text-dim: #6b7c80;
+    --white: #eef8f7;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background:
+      linear-gradient(rgba(94,234,212,0.035) 1px, transparent 1px) 0 0 / 100% 34px,
+      linear-gradient(90deg, rgba(94,234,212,0.035) 1px, transparent 1px) 0 0 / 34px 100%,
+      var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 48px 22px 90px;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; }
+
+  .panel {
+    position: relative;
+    background: linear-gradient(180deg, rgba(94,234,212,0.04), rgba(94,234,212,0.01));
+    border: 1px solid var(--line);
+    padding: 24px 26px;
+    margin-bottom: 22px;
+  }
+  .panel .tl, .panel .tr, .panel .bl, .panel .br {
+    content: "";
+    position: absolute;
+    width: 14px; height: 14px;
+    border: 2px solid var(--cyan);
+  }
+  .panel .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+  .panel .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+  .panel .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+  .panel .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+  .topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+  }
+  .topline .blink {
+    width: 6px; height: 6px;
+    background: var(--cyan);
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 8px;
+    box-shadow: 0 0 8px var(--cyan);
+    animation: blink 1.6s ease-in-out infinite;
+  }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.25; } }
+  @media (prefers-reduced-motion: reduce) { .blink { animation: none; } }
+
+  h1.title {
+    font-weight: 700;
+    font-size: clamp(30px, 6vw, 42px);
+    letter-spacing: 0.02em;
+    color: var(--white);
+    margin: 0 0 6px;
+    text-transform: uppercase;
+  }
+  h1.title .accent { color: var(--cyan); }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 16px;
+    margin: 0 0 26px;
+  }
+
+  .status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    overflow: hidden;
+    position: relative;
+  }
+  .status-row::after {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(94,234,212,0.06), transparent);
+    animation: sweep 5s linear infinite;
+  }
+  @keyframes sweep { to { left: 130%; } }
+  @media (prefers-reduced-motion: reduce) { .status-row::after { animation: none; } }
+
+  .status-left { display: flex; align-items: center; gap: 12px; z-index: 1; }
+  .status-left .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--cyan);
+  }
+  .status-left .dot {
+    width: 9px; height: 9px;
+    background: var(--cyan);
+    box-shadow: 0 0 10px var(--cyan);
+  }
+
+  .ip-block { text-align: right; z-index: 1; }
+  .ip-block .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 4px;
+  }
+  .ip-block .v {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    user-select: all;
+  }
+
+  h2.section {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin: 46px 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2.section::before { content: "//"; color: var(--cyan-dim); }
+  h2.section::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  .log-row {
+    display: grid;
+    grid-template-columns: 108px 1fr;
+    gap: 3px 18px;
+    padding: 14px 0;
+    border-top: 1px solid var(--line);
+    font-size: 16px;
+  }
+  .log-row:last-child { border-bottom: 1px solid var(--line); }
+  .log-row .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--amber);
+    padding-top: 3px;
+  }
+  .log-row .when {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--white);
+  }
+  .log-row .what { grid-column: 2; color: var(--text-dim); margin-top: 2px; }
+
+  .rules { list-style: none; margin: 0; padding: 0; }
+  .rules li {
+    padding: 13px 0 13px 26px;
+    border-top: 1px solid var(--line);
+    position: relative;
+    color: var(--text-dim);
+    font-size: 16px;
+  }
+  .rules li:last-child { border-bottom: 1px solid var(--line); }
+  .rules li::before {
+    content: "▸";
+    position: absolute;
+    left: 0; top: 12px;
+    color: var(--cyan);
+    font-size: 14px;
+  }
+  .rules li b { color: var(--text); font-weight: 600; }
+
+  .commands { width: 100%; border-collapse: collapse; font-size: 15px; }
+  .commands td { padding: 11px 0; border-top: 1px solid var(--line); vertical-align: top; }
+  .commands tr:last-child td { border-bottom: 1px solid var(--line); }
+  .commands td:first-child {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--cyan);
+    white-space: nowrap;
+    padding-right: 22px;
+    font-size: 14px;
+  }
+  .commands td:last-child { color: var(--text-dim); }
+
+  footer {
+    text-align: center;
+    margin-top: 70px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  @media (max-width: 540px) {
+    .status-row { flex-direction: column; align-items: flex-start; }
+    .ip-block { text-align: left; }
+    .log-row { grid-template-columns: 1fr; }
+    .log-row .what { grid-column: 1; }
+  }
+
+  /* ---------- tab nav ---------- */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin: 34px 0 0;
+    border: 1px solid var(--line);
+  }
+  .tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 13px 8px;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .tab-btn:not(:last-child) { border-right: 1px solid var(--line); }
+  .tab-btn:hover { color: var(--text); background: rgba(94,234,212,0.04); }
+  .tab-btn.active {
+    color: var(--cyan);
+    background: rgba(94,234,212,0.07);
+  }
+  .tab-btn.active::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* ---------- module cards (plugins) ---------- */
+  .module {
+    padding: 18px 0;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 4px 20px;
+  }
+  .module:last-child { border-bottom: 1px solid var(--line); }
+  .module .mod-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--white);
+    letter-spacing: 0.02em;
+  }
+  .module .mod-tag {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--amber);
+    margin-top: 5px;
+  }
+  .module .mod-desc {
+    grid-column: 2;
+    color: var(--text-dim);
+    font-size: 16px;
+    margin-top: 2px;
+  }
+
+  /* ---------- datapack grid ---------- */
+  .dp-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .dp-item {
+    background: var(--bg);
+    padding: 14px 16px;
+  }
+  .dp-item .dp-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--cyan);
+    letter-spacing: 0.02em;
+  }
+  .dp-item .dp-desc {
+    color: var(--text-dim);
+    font-size: 15px;
+    margin-top: 4px;
+  }
+  @media (max-width: 540px) {
+    .dp-grid { grid-template-columns: 1fr; }
+    .module { grid-template-columns: 1fr; }
+    .module .mod-desc { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topline">
+    <span><span class="blink"></span>MCSMP-01 // NIGHT-SHIFT NETWORK</span>
+    <span class="mono">UPTIME: AUTOMATED</span>
+  </div>
+
+  <h1 class="title">Server<span class="accent">.</span>Status</h1>
+  <p class="subtitle">Live status and maintenance schedule for the shift group's Minecraft server.</p>
+
+  <div class="panel">
+    <span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span>
+    <div class="status-row">
+      <div class="status-left">
+        <span class="dot"></span>
+        <span class="label">ONLINE</span>
+      </div>
+      <div class="ip-block">
+        <span class="k">CONNECT</span>
+        <span class="v">135.119.48.179</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="plugins">Plugins</button>
+    <button class="tab-btn" data-tab="datapacks">Datapacks</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-overview">
+
+    <h2 class="section">Maintenance Schedule</h2>
+
+    <div class="log-row">
+      <span class="tag">[AUTO]</span>
+      <span class="when">12:00 DAILY</span>
+      <span class="what">Full world backup. Last 7 days kept in rotation.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[AUTO]</span>
+      <span class="when">12:05 DAILY</span>
+      <span class="what">Server process restart. In-game warnings fire at T-10m, T-5m, T-1m before it happens.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[AUTO]</span>
+      <span class="when">12:30 THU</span>
+      <span class="what">Full host reboot for patching. Down ~1–2 min, comes back on its own.</span>
+    </div>
+
+    <h2 class="section">Ground Rules</h2>
+    <ul class="rules">
+      <li><b>Claim your land.</b> Golden shovel, mark your plot. Unclaimed builds are fair game.</li>
+      <li><b>Everything's logged.</b> Block changes are tracked. Rollbacks are easy — don't test that.</li>
+      <li><b>No economy yet.</b> Claim blocks are generous while the server's young.</li>
+      <li><b>Shift group only for now.</b> Ask in chat if you need the address.</li>
+    </ul>
+
+    <h2 class="section">Command Reference</h2>
+    <table class="commands">
+      <tr><td>/claim</td><td>Mark land as yours with a golden shovel in hand.</td></tr>
+      <tr><td>/home, /sethome</td><td>Set and return to a personal base.</td></tr>
+      <tr><td>/tpa &lt;player&gt;</td><td>Request to teleport to another player.</td></tr>
+      <tr><td>/spawn</td><td>Return to spawn at any time.</td></tr>
+      <tr><td>/co inspect</td><td>Check who changed a block, and when.</td></tr>
+    </table>
+
+  </div>
+
+  <div class="tab-panel" id="tab-plugins">
+
+    <h2 class="section">Installed Modules</h2>
+
+    <div class="module">
+      <div><span class="mod-name">EssentialsX</span><span class="mod-tag">CORE</span></div>
+      <div class="mod-desc">Homes, warps, kits, and /tpa. The backbone of day-to-day convenience — run /help in-game to see the full command list it adds.</div>
+    </div>
+    <div class="module">
+      <div><span class="mod-name">GriefPrevention</span><span class="mod-tag">PROTECTION</span></div>
+      <div class="mod-desc">Land claims via golden shovel. Protects builds and chests from other players — claimed ground can't be touched without permission.</div>
+    </div>
+    <div class="module">
+      <div><span class="mod-name">CoreProtect</span><span class="mod-tag">PROTECTION</span></div>
+      <div class="mod-desc">Logs every block change on the server. If something gets griefed or broken by accident, it can be rolled back to before it happened.</div>
+    </div>
+    <div class="module">
+      <div><span class="mod-name">Chunky</span><span class="mod-tag">PERFORMANCE</span></div>
+      <div class="mod-desc">Pre-generates terrain so exploring never triggers laggy live chunk generation. Runs occasionally in the background, not per-session.</div>
+    </div>
+    <div class="module">
+      <div><span class="mod-name">TAB</span><span class="mod-tag">INTERFACE</span></div>
+      <div class="mod-desc">Customizes the tab list — server name, player ping, and sort order. Purely cosmetic, no gameplay effect.</div>
+    </div>
+    <div class="module">
+      <div><span class="mod-name">Vault</span><span class="mod-tag">INFRASTRUCTURE</span></div>
+      <div class="mod-desc">No commands, no visible effect. It's the API other plugins hook into — installed now so an economy plugin can be added later without a rebuild.</div>
+    </div>
+
+  </div>
+
+  <div class="tab-panel" id="tab-datapacks">
+
+    <h2 class="section">Vanilla Tweaks &middot; Active</h2>
+    <p class="section-note" style="margin-top:-10px; margin-bottom:22px;">Vanilla-compatible tweaks, not mods — no client-side install needed to see their effects.</p>
+
+    <div class="dp-grid">
+      <div class="dp-item"><div class="dp-name">AFK Display</div><div class="dp-desc">Tags idle players in the tab list.</div></div>
+      <div class="dp-item"><div class="dp-name">Armored Elytra</div><div class="dp-desc">Throw a chestplate and an elytra onto an anvil (press Q to drop both on top) to merge them into one item with the armor's stats. To split them back apart, throw the merged item onto a grindstone.</div></div>
+      <div class="dp-item"><div class="dp-name">Confetti Creepers</div><div class="dp-desc">Creeper explosions burst into harmless confetti.</div></div>
+      <div class="dp-item"><div class="dp-name">Double Shulker Shells</div><div class="dp-desc">Shulkers drop two shells instead of one.</div></div>
+      <div class="dp-item"><div class="dp-name">Dragon Drops</div><div class="dp-desc">Adds extra loot options from the Ender Dragon fight.</div></div>
+      <div class="dp-item"><div class="dp-name">Durability Ping</div><div class="dp-desc">Warns in chat when a held item is close to breaking. Run /durabilityping set to adjust the warning threshold or sound.</div></div>
+      <div class="dp-item"><div class="dp-name">Ender Chest Always Drops</div><div class="dp-desc">Ender chests always drop when mined, tool or not.</div></div>
+      <div class="dp-item"><div class="dp-name">Fast Leaf Decay</div><div class="dp-desc">Cut leaves decay almost instantly instead of lingering.</div></div>
+      <div class="dp-item"><div class="dp-name">Glass Always Drops</div><div class="dp-desc">Glass and glass panes drop as items when broken.</div></div>
+      <div class="dp-item"><div class="dp-name">Mini Blocks</div><div class="dp-desc">Craft slabs/stairs down into smaller decorative blocks.</div></div>
+      <div class="dp-item"><div class="dp-name">More Effective Tools</div><div class="dp-desc">Expands what tools can correctly mine which blocks.</div></div>
+      <div class="dp-item"><div class="dp-name">More Mob Heads</div><div class="dp-desc">All mobs have a rare chance to drop their head.</div></div>
+      <div class="dp-item"><div class="dp-name">Multiplayer Sleep</div><div class="dp-desc">A percentage of players sleeping skips the night, not everyone.</div></div>
+      <div class="dp-item"><div class="dp-name">Name Colors</div><div class="dp-desc">Lets you set a custom color for your own name/nametag. Exact command wasn't confirmed for this write-up — check in-game (likely a /trigger or dye-based interaction).</div></div>
+      <div class="dp-item"><div class="dp-name">Painting Picker</div><div class="dp-desc">Place a painting item in a Stonecutter to browse and select the exact variant before placing it — no more random re-rolling.</div></div>
+      <div class="dp-item"><div class="dp-name">Player Head Drops</div><div class="dp-desc">Players drop their own head on death.</div></div>
+      <div class="dp-item"><div class="dp-name">Wandering Trader Announcements</div><div class="dp-desc">Chat message when a Wandering Trader spawns nearby.</div></div>
+      <div class="dp-item"><div class="dp-name">Wandering Trades</div><div class="dp-desc">Expands and rebalances the Wandering Trader's trade pool.</div></div>
+    </div>
+
+  </div>
+
+  <footer>MCSMP-01 &middot; status page maintained by cron, not by hand</footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+
+</div>
+</body>
+</html>
