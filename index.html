@@ -367,6 +367,7 @@
     <button class="tab-btn active" data-tab="overview">Overview</button>
     <button class="tab-btn" data-tab="plugins">Plugins</button>
     <button class="tab-btn" data-tab="datapacks">Datapacks</button>
+    <button class="tab-btn" data-tab="patchnotes">Patch Notes</button>
   </div>
 
   <div class="tab-panel active" id="tab-overview">
@@ -402,6 +403,7 @@
       <tr><td>/claim</td><td>Mark land as yours with a golden shovel in hand.</td></tr>
       <tr><td>/home, /sethome</td><td>Set and return to a personal base.</td></tr>
       <tr><td>/tpa &lt;player&gt;</td><td>Request to teleport to another player.</td></tr>
+      <tr><td>/spawn</td><td>Return to spawn at any time.</td></tr>
       <tr><td>/co inspect</td><td>Check who changed a block, and when.</td></tr>
     </table>
 
@@ -446,18 +448,18 @@
     <div class="dp-grid">
       <div class="dp-item"><div class="dp-name">AFK Display</div><div class="dp-desc">Tags idle players in the tab list.</div></div>
       <div class="dp-item"><div class="dp-name">Armored Elytra</div><div class="dp-desc">Throw a chestplate and an elytra onto an anvil (press Q to drop both on top) to merge them into one item with the armor's stats. To split them back apart, throw the merged item onto a grindstone.</div></div>
-      <div class="dp-item"><div class="dp-name">Confetti Creepers</div><div class="dp-desc">Creeper explosions burst into harmless confetti.</div></div>
+      <div class="dp-item"><div class="dp-name">Graves</div><div class="dp-desc">Death drops a grave marker holding your items and XP instead of scattering loose on the ground. Break it to collect everything back.</div></div>
       <div class="dp-item"><div class="dp-name">Double Shulker Shells</div><div class="dp-desc">Shulkers drop two shells instead of one.</div></div>
       <div class="dp-item"><div class="dp-name">Dragon Drops</div><div class="dp-desc">Adds extra loot options from the Ender Dragon fight.</div></div>
       <div class="dp-item"><div class="dp-name">Durability Ping</div><div class="dp-desc">Warns in chat when a held item is close to breaking. Run /durabilityping set to adjust the warning threshold or sound.</div></div>
       <div class="dp-item"><div class="dp-name">Ender Chest Always Drops</div><div class="dp-desc">Ender chests always drop when mined, tool or not.</div></div>
       <div class="dp-item"><div class="dp-name">Fast Leaf Decay</div><div class="dp-desc">Cut leaves decay almost instantly instead of lingering.</div></div>
       <div class="dp-item"><div class="dp-name">Glass Always Drops</div><div class="dp-desc">Glass and glass panes drop as items when broken.</div></div>
-      <div class="dp-item"><div class="dp-name">Mini Blocks</div><div class="dp-desc">Craft blocks into smaller versions with a stonecutter.</div></div>
+      <div class="dp-item"><div class="dp-name">Mini Blocks</div><div class="dp-desc">Craft slabs/stairs down into smaller decorative blocks.</div></div>
       <div class="dp-item"><div class="dp-name">More Effective Tools</div><div class="dp-desc">Expands what tools can correctly mine which blocks.</div></div>
       <div class="dp-item"><div class="dp-name">More Mob Heads</div><div class="dp-desc">All mobs have a rare chance to drop their head.</div></div>
       <div class="dp-item"><div class="dp-name">Multiplayer Sleep</div><div class="dp-desc">A percentage of players sleeping skips the night, not everyone.</div></div>
-      <div class="dp-item"><div class="dp-name">Name Colors</div><div class="dp-desc">Lets you set a custom color for your own name/nametag. Enter '/Trigger color' to see options.</div></div>
+      <div class="dp-item"><div class="dp-name">Name Colors</div><div class="dp-desc">Lets you set a custom color for your own name/nametag. /trigger color for options.</div></div>
       <div class="dp-item"><div class="dp-name">Painting Picker</div><div class="dp-desc">Place a painting item in a Stonecutter to browse and select the exact variant before placing it — no more random re-rolling.</div></div>
       <div class="dp-item"><div class="dp-name">Player Head Drops</div><div class="dp-desc">Players drop their own head on death.</div></div>
       <div class="dp-item"><div class="dp-name">Wandering Trader Announcements</div><div class="dp-desc">Chat message when a Wandering Trader spawns nearby.</div></div>
@@ -466,7 +468,38 @@
 
   </div>
 
-  <footer>MCSMP-01 &middot; </footer>
+  <div class="tab-panel" id="tab-patchnotes">
+
+    <h2 class="section">Log &middot; Aug 19</h2>
+    <div class="log-row">
+      <span class="tag">[FIX]</span>
+      <span class="when">CoreProtect</span>
+      <span class="what">Was silently failing to load since install (version mismatch). Replaced with a build that actually supports the server's Minecraft version. Block logging and /co rollback are live now — anything before tonight was never logged.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[ADD]</span>
+      <span class="when">Graves</span>
+      <span class="what">Dying now drops a grave holding your items and XP instead of scattering them loose. Break it to get everything back.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[CHANGE]</span>
+      <span class="when">Keep Inventory</span>
+      <span class="what">Turned off, now that Graves has your back on death. Losing items is recoverable again, not permanent — just go find your grave.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[REMOVE]</span>
+      <span class="when">Confetti Creepers</span>
+      <span class="what">Taken out — creeper explosions are back to normal instead of harmless confetti.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[CHANGE]</span>
+      <span class="when">TNT</span>
+      <span class="what">Used to be silently blocked above sea level almost everywhere. Now works normally outside claims — still fully blocked inside anyone's claimed land.</span>
+    </div>
+
+  </div>
+
+  <footer>MCSMP-01 &middot; status page maintained by cron</footer>
 
   <script>
     document.querySelectorAll('.tab-btn').forEach(btn => {
