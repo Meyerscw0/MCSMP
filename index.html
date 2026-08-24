@@ -404,7 +404,9 @@
       <tr><td>/home, /sethome</td><td>Set and return to a personal base.</td></tr>
       <tr><td>/tpa &lt;player&gt;</td><td>Request to teleport to another player.</td></tr>
       <tr><td>/spawn</td><td>Return to spawn at any time.</td></tr>
-      <tr><td>/co inspect</td><td>Check who changed a block, and when.</td></tr>
+      <tr><td>Sneak + left-click chest</td><td>Instantly sorts and stacks that chest's contents.</td></tr>
+    <tr><td>/sortprefs</td><td>Set your personal sort type/order preferences for chest sorting.</td></tr>
+    <tr><td>/co inspect</td><td>Check who changed a block, and when.</td></tr>
     </table>
 
   </div>
@@ -438,6 +440,15 @@
       <div class="mod-desc">No commands, no visible effect. It's the API other plugins hook into — installed now so an economy plugin can be added later without a rebuild.</div>
     </div>
 
+    <div class="module">
+      <div><span class="mod-name">ChestSorter</span><span class="mod-tag">CONVENIENCE</span></div>
+      <div class="mod-desc">Sneak + left-click any chest to instantly sort and stack its contents. Run /sortprefs to customize sort type and order — no menu needed, everything's done through the chest itself.</div>
+    </div>
+    <div class="module">
+      <div><span class="mod-name">FarmProtect</span><span class="mod-tag">PROTECTION</span></div>
+      <div class="mod-desc">Stops crops from getting trampled by players or mobs walking over farmland. No commands — it just works passively in the background.</div>
+    </div>
+
   </div>
 
   <div class="tab-panel" id="tab-datapacks">
@@ -459,7 +470,7 @@
       <div class="dp-item"><div class="dp-name">More Effective Tools</div><div class="dp-desc">Expands what tools can correctly mine which blocks.</div></div>
       <div class="dp-item"><div class="dp-name">More Mob Heads</div><div class="dp-desc">All mobs have a rare chance to drop their head.</div></div>
       <div class="dp-item"><div class="dp-name">Multiplayer Sleep</div><div class="dp-desc">A percentage of players sleeping skips the night, not everyone.</div></div>
-      <div class="dp-item"><div class="dp-name">Name Colors</div><div class="dp-desc">Lets you set a custom color for your own name/nametag. /trigger color for options.</div></div>
+      <div class="dp-item"><div class="dp-name">Name Colors</div><div class="dp-desc">Lets you set a custom color for your own name/nametag. Exact command wasn't confirmed for this write-up — check in-game (likely a /trigger or dye-based interaction).</div></div>
       <div class="dp-item"><div class="dp-name">Painting Picker</div><div class="dp-desc">Place a painting item in a Stonecutter to browse and select the exact variant before placing it — no more random re-rolling.</div></div>
       <div class="dp-item"><div class="dp-name">Player Head Drops</div><div class="dp-desc">Players drop their own head on death.</div></div>
       <div class="dp-item"><div class="dp-name">Wandering Trader Announcements</div><div class="dp-desc">Chat message when a Wandering Trader spawns nearby.</div></div>
@@ -469,6 +480,28 @@
   </div>
 
   <div class="tab-panel" id="tab-patchnotes">
+
+    <h2 class="section">Log &middot; Aug 20</h2>
+    <div class="log-row">
+      <span class="tag">[CHANGE]</span>
+      <span class="when">Render Distance</span>
+      <span class="what">Bumped up now that real concurrent numbers came in lower than planned. Should look noticeably further out with no performance cost.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[ADD]</span>
+      <span class="when">ChestSorter</span>
+      <span class="what">Sneak + left-click any chest to sort it instantly. Check the Plugins tab for full usage.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[ADD]</span>
+      <span class="when">FarmProtect</span>
+      <span class="what">Crops no longer get trampled by walking over them. Passive, no setup needed on your end.</span>
+    </div>
+    <div class="log-row">
+      <span class="tag">[FIX]</span>
+      <span class="when">////////</span>
+      <span class="what">Removed Herobrine.</span>
+    </div>
 
     <h2 class="section">Log &middot; Aug 19</h2>
     <div class="log-row">
@@ -499,7 +532,7 @@
 
   </div>
 
-  <footer>MCSMP-01 &middot; status page maintained by cron</footer>
+  <footer>MCSMP-01 &middot; </footer>
 
   <script>
     document.querySelectorAll('.tab-btn').forEach(btn => {
